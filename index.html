@@ -1,0 +1,323 @@
+<!DOCTYPE HTML>
+<!--Arcana by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Crop Alert</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="refresh" content="10">
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/jquery.dropotron.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-layers.min.js"></script>
+		<script src="js/init.js"></script>
+		<style>
+      		/*html, body, */#map-canvas {
+        		height: 80vh;
+        		width: 90vw;
+        		margin: 5vh 5vw 0 5vw;
+        		padding: 0px;
+      		}
+
+      		#logo {
+      			align: center;
+      		}
+
+    	</style>
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+
+		<script>
+		// Note: This example requires that you consent to location sharing when
+		// prompted by your browser. If you see a blank space instead of the map, this
+		// is probably because you have denied permission for location sharing.
+
+//--------------------------------------------------------------------//
+
+		var locations = [];
+		var geocoder;
+		var map;
+		if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            	myFunction(xmlhttp.responseText);
+            	}
+            }
+        xmlhttp.open("POST", window.location.href + "/server_side.php",true);
+        xmlhttp.send();
+
+//--------------------------------------------------------------------//
+
+		function myFunction(response) {
+			var arr = JSON.parse(response);
+			for (i=0; i< arr.AddressList.length; i++) {
+	 			locations[i] = arr.AddressList[i].Address;
+			}
+			loadMap();
+		}
+
+//--------------------------------------------------------------------//
+
+		function loadMap() {
+			geocoder = new google.maps.Geocoder();
+  			var latlng = new google.maps.LatLng(0, 0);
+  			var mapOptions = {
+    			zoom: 2,
+    			minZoom: 2, 
+    			maxZoom: 15,
+    			center: latlng
+  			}
+  			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  			codeAddress();
+		}
+
+//-------------------------------------------------------------------//
+
+		function codeAddress() {
+			for (i = 0; i<locations.length; i++) {
+  				var address = locations[i];
+  				geocoder.geocode( { 'address': address}, function(results, status) {
+    				if (status == google.maps.GeocoderStatus.OK) {
+      					map.setCenter(results[0].geometry.location);
+      					var marker = new google.maps.Marker({
+          					map: map,
+          					position: results[0].geometry.location
+      					});
+    				} else {
+      					alert('Geocode was not successful for the following reason: ' + status);
+    				}
+  				});
+			}
+		}
+		</script>
+		<noscript>
+			<link rel="stylesheet" href="css/skel.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-wide.css" />
+		</noscript>
+		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Header -->
+			<div id="header">
+
+				<!-- Logo -->
+					<h1><a href="/" id="logo"><img src="images/logo.png" width="8%"><br>AGRIGUARD</a></h1>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul>
+							<li class="current"><a href="/">Home</a></li>
+							<li>
+								<a href="">Select Country</a>
+								<ul>
+									<li><a href="#">United States</a></li>
+									<li><a href="#">India</a></li>
+									<li>
+										<a href="">Africa</a>
+										<ul>
+											<li><a href="#">Kenya</a></li>
+											<li><a href="#">Bosnia</a></li>
+											<li><a href="#">Nigeria</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li><a href="right-sidebar.html">Look At the Data</a></li>
+							<li><a href="portfolio_masonry_listing.html">Community Board</a></li>
+							<li><a href="no-sidebar.html">About Us</a></li>
+						</ul>
+					</nav>
+
+			</div>
+
+		<!-- Banner -->
+			<section>
+			<!-- <div id="panel">
+      			<input id="address" type="textbox" value="Sydney, NSW">
+      			<input type="button" value="Geocode" onclick="codeAddress()">
+    		</div> -->
+			<div id="map-canvas"></div><br><br>
+			</section>
+
+		<!-- Highlights -->
+			<!-- <section class="wrapper style1">
+				<div class="container">
+					<div class="row 200%">
+						<section class="4u 12u(narrower)">
+							<div class="box highlight">
+								<i class="icon major fa-paper-plane"></i>
+								<h3>This Is Important</h3>
+								<p>Duis neque nisi, dapibus sed mattis et quis, nibh. Sed et dapibus nisl amet mattis, sed a rutrum accumsan sed. Suspendisse eu.</p>
+							</div>
+						</section>
+						<section class="4u 12u(narrower)">
+							<div class="box highlight">
+								<i class="icon major fa-pencil"></i>
+								<h3>Also Important</h3>
+								<p>Duis neque nisi, dapibus sed mattis et quis, nibh. Sed et dapibus nisl amet mattis, sed a rutrum accumsan sed. Suspendisse eu.</p>
+							</div>
+						</section>
+						<section class="4u 12u(narrower)">
+							<div class="box highlight">
+								<i class="icon major fa-wrench"></i>
+								<h3>Probably Important</h3>
+								<p>Duis neque nisi, dapibus sed mattis et quis, nibh. Sed et dapibus nisl amet mattis, sed a rutrum accumsan sed. Suspendisse eu.</p>
+							</div>
+						</section>
+					</div>
+				</div>
+			</section>
+
+		<!-- Gigantic Heading -->
+			<!-- <section class="wrapper style2">
+				<div class="container">
+					<header class="major">
+						<h2>A gigantic heading you can use for whatever</h2>
+						<p>With a much smaller subtitle hanging out just below it</p>
+					</header>
+				</div>
+			</section>  -->
+
+		<!-- Posts -->
+			<!-- <section class="wrapper style1">
+				<div class="container">
+					<div class="row">
+						<section class="6u 12u(narrower)">
+							<div class="box post">
+								<a href="#" class="image left"><img src="images/pic01.jpg" alt="" /></a>
+								<div class="inner">
+									<h3>The First Thing</h3>
+									<p>Duis neque nisi, dapibus sed mattis et quis, nibh. Sed et dapibus nisl amet mattis, sed a rutrum accumsan sed. Suspendisse eu.</p>
+								</div>
+							</div>
+						</section>
+						<section class="6u 12u(narrower)">
+							<div class="box post">
+								<a href="#" class="image left"><img src="images/pic02.jpg" alt="" /></a>
+								<div class="inner">
+									<h3>The Second Thing</h3>
+									<p>Duis neque nisi, dapibus sed mattis et quis, nibh. Sed et dapibus nisl amet mattis, sed a rutrum accumsan sed. Suspendisse eu.</p>
+								</div>
+							</div>
+						</section>
+					</div>
+					<div class="row">
+						<section class="6u 12u(narrower)">
+							<div class="box post">
+								<a href="#" class="image left"><img src="images/pic03.jpg" alt="" /></a>
+								<div class="inner">
+									<h3>The Third Thing</h3>
+									<p>Duis neque nisi, dapibus sed mattis et quis, nibh. Sed et dapibus nisl amet mattis, sed a rutrum accumsan sed. Suspendisse eu.</p>
+								</div>
+							</div>
+						</section>
+						<section class="6u 12u(narrower)">
+							<div class="box post">
+								<a href="#" class="image left"><img src="images/pic04.jpg" alt="" /></a>
+								<div class="inner">
+									<h3>The Fourth Thing</h3>
+									<p>Duis neque nisi, dapibus sed mattis et quis, nibh. Sed et dapibus nisl amet mattis, sed a rutrum accumsan sed. Suspendisse eu.</p>
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+			</section>
+
+		<!-- CTA -->
+			<section id="cta" class="wrapper style3">
+				<div class="container">
+					<header>
+						<h2>Join us and learn more</h2>
+						<a href="#" class="button">Learn more</a>
+					</header>
+				</div>
+			</section> 
+
+		<!-- Footer -->
+			<div id="footer">
+				<div class="container">
+					<div class="row">
+						<section class="3u 6u(narrower) 12u$(mobilep)">
+							<h3>Links to Stuff</h3>
+							<ul class="links">
+								<li><a href="#">Mattis et quis rutrum</a></li>
+								<li><a href="#">Suspendisse amet varius</a></li>
+								<li><a href="#">Sed et dapibus quis</a></li>
+								<li><a href="#">Rutrum accumsan dolor</a></li>
+								<li><a href="#">Mattis rutrum accumsan</a></li>
+								<li><a href="#">Suspendisse varius nibh</a></li>
+								<li><a href="#">Sed et dapibus mattis</a></li>
+							</ul>
+						</section>
+						<section class="3u 6u$(narrower) 12u$(mobilep)">
+							<h3>More Links to Stuff</h3>
+							<ul class="links">
+								<li><a href="#">Duis neque nisi dapibus</a></li>
+								<li><a href="#">Sed et dapibus quis</a></li>
+								<li><a href="#">Rutrum accumsan sed</a></li>
+								<li><a href="#">Mattis et sed accumsan</a></li>
+								<li><a href="#">Duis neque nisi sed</a></li>
+								<li><a href="#">Sed et dapibus quis</a></li>
+								<li><a href="#">Rutrum amet varius</a></li>
+							</ul>
+						</section>
+						<section class="6u 12u(narrower)">
+							<h3>Get In Touch</h3>
+							<form>
+								<div class="row 50%">
+									<div class="6u 12u(mobilep)">
+										<input type="text" name="name" id="name" placeholder="Name" />
+									</div>
+									<div class="6u 12u(mobilep)">
+										<input type="email" name="email" id="email" placeholder="Email" />
+									</div>
+								</div>
+								<div class="row 50%">
+									<div class="12u">
+										<textarea name="message" id="message" placeholder="Message" rows="5"></textarea>
+									</div>
+								</div>
+								<div class="row 50%">
+									<div class="12u">
+										<ul class="actions">
+											<li><input type="submit" class="button alt" value="Send Message" /></li>
+										</ul>
+									</div>
+								</div>
+							</form>
+						</section>
+					</div>
+				</div>
+
+				<!-- Icons -->
+					<ul class="icons">
+						<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon fa-github"><span class="label">GitHub</span></a></li>
+						<li><a href="#" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>
+						<li><a href="#" class="icon fa-google-plus"><span class="label">Google+</span></a></li>
+					</ul>
+
+				<!-- Copyright -->
+					<!-- <div class="copyright">
+						<ul class="menu">
+							<li>&copy; Untitled. All rights reserved</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						</ul>
+					</div>
+ -->
+			<!-- </div> -->
+	</body>
+</html>
